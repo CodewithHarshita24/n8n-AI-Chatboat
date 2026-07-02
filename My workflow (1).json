@@ -1,0 +1,306 @@
+{
+  "name": "My workflow",
+  "nodes": [
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.chatTrigger",
+      "typeVersion": 1.4,
+      "position": [
+        -544,
+        16
+      ],
+      "id": "09ece4cb-ddf9-4dac-aa7e-0bcb6db9a897",
+      "name": "When chat message received",
+      "webhookId": "921f9f0b-ce2a-4eba-9ecd-a493e65d2196"
+    },
+    {
+      "parameters": {
+        "options": {
+          "systemMessage": "# Role & Core Objective\nYou are a customer support assistant for Twidix. Your job is to strictly use your Google Sheets tools to answer customer queries.\n\n# Critical Rules for Language & Memory\n- You must support ALL languages dynamically.\n- Always check the language of the user's VERY LAST message and reply in that EXACT same language (e.g., If Hindi, reply in Hindi. If English, reply in English).\n- FORGET the language of previous messages after every single reply. Every time, decide the language fresh based ONLY on the current question. Do not get influenced by the chat history.\n\n# Greeting Rule\n- The first welcome message must ALWAYS be: \"Welcome to Twidix, Hope you are doing well . How can I help you?\"\n\n# Conversation Flow & Tool Usage Rules\n1. When a user asks a question, first use your search tools to check the \"Plans\" or \"FAQs\" sheets.\n2. If the question matches the data in the Plans sheet:\n   - Show the plan name and description clearly to the user.\n3. If the question matches the data in the FAQ sheet:\n   - Give the most suitable FAQ answer.\n4. If the information is NOT available in other sheets:\n   - Do NOT try to guess or hallucinate any answer.\n   - Clearly reply exactly: \"Sorry we don't have answer to your query . We have noted your query . Please share your mobile number . We will reach you soon\"\n   - Wait for the user to reply with their mobile number.\n5. Once the user provides their mobile number after the fallback message, IMMEDIATELY call the \"Append row in sheet\" tool to save the user's original Question and Mobile number into the \"New to add\" sheet.\n6. After successfully saving the number, thank the user politely in their language.\n"
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 3.1,
+      "position": [
+        96,
+        16
+      ],
+      "id": "1958c1b2-cc79-49d0-8ee7-7e2b0f56874b",
+      "name": "AI Agent"
+    },
+    {
+      "parameters": {
+        "contextWindowLength": 10
+      },
+      "type": "@n8n/n8n-nodes-langchain.memoryBufferWindow",
+      "typeVersion": 1.4,
+      "position": [
+        32,
+        240
+      ],
+      "id": "d16d0a9a-e36b-4fb5-8a99-bea1afb001d3",
+      "name": "Simple Memory"
+    },
+    {
+      "parameters": {
+        "amount": 3
+      },
+      "type": "n8n-nodes-base.wait",
+      "typeVersion": 1.1,
+      "position": [
+        -320,
+        16
+      ],
+      "id": "cd768630-a798-4c6f-8823-d3d81ca4767d",
+      "name": "Wait",
+      "webhookId": "409b2621-6807-46c4-98f9-6f7fcd4c3a2b"
+    },
+    {
+      "parameters": {
+        "documentId": {
+          "__rl": true,
+          "value": "1zs_vKw78RpIAl7rVz1T3RMbEJJayBDzn3C_-tiGElok",
+          "mode": "list",
+          "cachedResultName": "Course Data",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1zs_vKw78RpIAl7rVz1T3RMbEJJayBDzn3C_-tiGElok/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "Plans",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1zs_vKw78RpIAl7rVz1T3RMbEJJayBDzn3C_-tiGElok/edit#gid=0"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheetsTool",
+      "typeVersion": 4.7,
+      "position": [
+        192,
+        240
+      ],
+      "id": "75364bf1-f728-4811-abf3-d5262332643e",
+      "name": "Plans",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "cKTwrS86RAiCsAkd",
+          "name": "Google Sheets account 2"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "descriptionType": "manual",
+        "toolDescription": "\"Use this tool to fetch answers from the FAQ sheet when the user asks a general question or frequently asked question about Twidix.\"",
+        "documentId": {
+          "__rl": true,
+          "value": "1zs_vKw78RpIAl7rVz1T3RMbEJJayBDzn3C_-tiGElok",
+          "mode": "list",
+          "cachedResultName": "Course Data",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1zs_vKw78RpIAl7rVz1T3RMbEJJayBDzn3C_-tiGElok/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": 2137964421,
+          "mode": "list",
+          "cachedResultName": "FAQs",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1zs_vKw78RpIAl7rVz1T3RMbEJJayBDzn3C_-tiGElok/edit#gid=2137964421"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheetsTool",
+      "typeVersion": 4.7,
+      "position": [
+        352,
+        240
+      ],
+      "id": "0a143e80-311b-4763-a99a-66b8810a72cf",
+      "name": "FAQs",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "cKTwrS86RAiCsAkd",
+          "name": "Google Sheets account 2"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "append",
+        "documentId": {
+          "__rl": true,
+          "value": "1zs_vKw78RpIAl7rVz1T3RMbEJJayBDzn3C_-tiGElok",
+          "mode": "id"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": 877136653,
+          "mode": "list",
+          "cachedResultName": "New to add",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1zs_vKw78RpIAl7rVz1T3RMbEJJayBDzn3C_-tiGElok/edit#gid=877136653"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "Mobile Number": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Mobile_Number', ``, 'string') }}",
+            "Questions ": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Questions_', ``, 'string') }}"
+          },
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "Mobile Number",
+              "displayName": "Mobile Number",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Questions ",
+              "displayName": "Questions ",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheetsTool",
+      "typeVersion": 4.7,
+      "position": [
+        560,
+        240
+      ],
+      "id": "4029527a-62cf-4b72-bf26-ce3c6d54fa51",
+      "name": "Unanswered",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "cKTwrS86RAiCsAkd",
+          "name": "Google Sheets account 2"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "options": {
+          "maxTokens": 2000
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenRouter",
+      "typeVersion": 1,
+      "position": [
+        -160,
+        240
+      ],
+      "id": "edf652df-8d2b-4c55-8bc5-62b34ec17dc5",
+      "name": "OpenRouter Chat Model",
+      "credentials": {
+        "openRouterApi": {
+          "id": "Yd63DgHPygMj7agy",
+          "name": "OpenRouter account"
+        }
+      }
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "When chat message received": {
+      "main": [
+        [
+          {
+            "node": "Wait",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Simple Memory": {
+      "ai_memory": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_memory",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Wait": {
+      "main": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Plans": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "FAQs": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Unanswered": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenRouter Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": true,
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate",
+    "availableInMCP": false
+  },
+  "versionId": "8f604f55-0888-48a1-bd4e-5b6c2e742004",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "a6886744decbb17448bbd74dcb21cb6d0c59c1a9e3ade8f6ba85e2d2fcc3ede9"
+  },
+  "nodeGroups": [],
+  "id": "g8HvBLEQptn6EmIz",
+  "tags": []
+}
