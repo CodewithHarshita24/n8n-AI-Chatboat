@@ -28,9 +28,25 @@ This repository contains a production-ready **n8n workflow** designed to act as 
 ## 🛠️ How to Run This Project Post-Trial (Self-Hosting)
 
 If your n8n cloud trial expires or you want to host this workflow independently, you can easily run this entire setup locally or on a cloud server using Docker:
-
-### 1. Clone the Repository
-```bash
-git clone [https://github.com/CodewithHarshita24/n8n-AI-Chatboat.git](https://github.com/CodewithHarshita24/n8n-AI-Chatboat.git)
+### 1. Clone the Repository 
+```bash 
+git clone https://github.com/CodewithHarshita24/n8n-AI-Chatboat.git
+# Navigate into the project directory
 cd n8n-AI-Chatboat
+```
+
+# Build the Docker image from the Dockerfile and tag it as 'n8n-ai-chatbot'
+```bash
+docker build -t n8n-ai-chatbot .
+```
+
+# Run the Docker container, exposing it on port 5678
+```bash
+docker run -it --rm --name n8n-chatbot -p 5678:5678 n8n-ai-chatbot
+```
+
+# Access the application by:
+```bash
+http://localhost:5678
+```
 
